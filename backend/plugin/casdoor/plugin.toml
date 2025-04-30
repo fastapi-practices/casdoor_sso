@@ -1,0 +1,6 @@
+[app]
+include = 'admin'
+
+[api.sso]
+prefix = '/sso'
+tags = 'Casdoor SSO'
