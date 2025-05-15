@@ -8,5 +8,5 @@ author = 'wu-clan'
 include = 'admin'
 
 [api.sso]
-prefix = '/sso'
+prefix = '/casdoor-sso'
 tags = 'Casdoor SSO'
