@@ -12,13 +12,13 @@ from backend.plugin.fba_casdoor.service.sso_service import sso_service
 router = APIRouter()
 
 sdk = AsyncCasdoorSDK(
-    endpoint=settings.CASDOOR_ENDPOINT,
-    client_id=settings.CASDOOR_CLIENT_ID,
-    client_secret=settings.CASDOOR_CLIENT_SECRET,
-    certificate=settings.CASDOOR_CERTIFICATE,
-    org_name=settings.CASDOOR_ORG_NAME,
-    application_name=settings.CASDOOR_APPLICATION_NAME,
-    front_endpoint=settings.CASDOOR_FRONT_ENDPOINT,
+    endpoint=settings.CASDOOR_SSO_ENDPOINT,
+    client_id=settings.CASDOOR_SSO_CLIENT_ID,
+    client_secret=settings.CASDOOR_SSO_CLIENT_SECRET,
+    certificate=settings.CASDOOR_SSO_CERTIFICATE,
+    org_name=settings.CASDOOR_SSO_ORG_NAME,
+    application_name=settings.CASDOOR_SSO_APPLICATION_NAME,
+    front_endpoint=settings.CASDOOR_SSO_FRONT_ENDPOINT,
 )
 
 
@@ -46,4 +46,4 @@ async def casdoor_sso_login(request: Request, response: Response, background_tas
         background_tasks=background_tasks,
         user=user,
     )
-    return RedirectResponse(url=f'{settings.CASDOOR_FRONTEND_REDIRECT_URI}?access_token={data.access_token}')
+    return RedirectResponse(url=f'{settings.CASDOOR_SSO_FRONTEND_REDIRECT_URI}?access_token={data.access_token}')
