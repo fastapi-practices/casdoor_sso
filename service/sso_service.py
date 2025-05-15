@@ -5,7 +5,6 @@ from typing import Any
 from fast_captcha import text_captcha
 from fastapi import BackgroundTasks, Request, Response
 
-from backend.app.admin.conf import admin_settings
 from backend.app.admin.crud.crud_user import user_dao
 from backend.app.admin.schema.token import GetLoginToken
 from backend.app.admin.schema.user import RegisterUserParam
@@ -87,7 +86,7 @@ class SSOService:
                 msg='登录成功（SSO）',
             )
             background_tasks.add_task(login_log_service.create, **login_log)
-            await redis_client.delete(f'{admin_settings.CAPTCHA_LOGIN_REDIS_PREFIX}:{request.state.ip}')
+            await redis_client.delete(f'{settings.CAPTCHA_LOGIN_REDIS_PREFIX}:{request.state.ip}')
             response.set_cookie(
                 key=settings.COOKIE_REFRESH_TOKEN_KEY,
                 value=refresh_token.refresh_token,
