@@ -1,0 +1,12 @@
+[plugin]
+summary = 'Casdoor SSO'
+version = '0.0.1'
+description = '通过 Casdoor 实现 SSO 单点登录集成'
+author = 'wu-clan'
+
+[app]
+include = 'admin'
+
+[api.sso]
+prefix = '/sso'
+tags = 'Casdoor SSO'
