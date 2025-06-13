@@ -7,7 +7,7 @@ from starlette.responses import RedirectResponse
 
 from backend.common.response.response_schema import ResponseSchemaModel, response_base
 from backend.core.conf import settings
-from backend.plugin.fba_casdoor.service.sso_service import sso_service
+from backend.plugin.casdoor_sso.service.sso_service import sso_service
 
 router = APIRouter()
 
@@ -46,4 +46,6 @@ async def casdoor_sso_login(request: Request, response: Response, background_tas
         background_tasks=background_tasks,
         user=user,
     )
-    return RedirectResponse(url=f'{settings.CASDOOR_SSO_FRONTEND_REDIRECT_URI}?access_token={data.access_token}')
+    return RedirectResponse(
+        url=f'{settings.CASDOOR_SSO_FRONTEND_REDIRECT_URI}?access_token={data.access_token}&session_uuid={data.session_uuid}'
+    )

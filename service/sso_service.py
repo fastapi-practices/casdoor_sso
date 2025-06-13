@@ -39,30 +39,25 @@ class SSOService:
         """
         async with async_db_session.begin() as db:
             # 获取 Casdoor 平台用户信息
-            sso_username = user.get('name')
-            sso_nickname = user.get('displayName')
-            sso_email = user.get('email')
-            sys_user = await user_dao.check_email(db, sso_email)
+            username = user.get('name')
+            nickname = user.get('displayName')
+            email = user.get('email')
+            sys_user = await user_dao.check_email(db, email)
             if not sys_user:
-                sys_user = await user_dao.get_by_username(db, sso_username)
-                if sys_user:
-                    sso_username = f'{sso_username}#{text_captcha(5)}'
-                sys_user = await user_dao.get_by_nickname(db, sso_nickname)
-                if sys_user:
-                    sso_nickname = f'{sso_nickname}#{text_captcha(5)}'
+                while await user_dao.get_by_username(db, username):
+                    username = f'{username}_{text_captcha(5)}'
                 new_sys_user = RegisterUserParam(
-                    username=sso_username,
-                    password=None,
-                    nickname=sso_nickname,
-                    email=sso_email,
+                    username=username,
+                    password='123456',  # 默认密码，可修改系统用户表进行默认密码检测并配合前端进行修改密码提示
+                    nickname=nickname,
+                    email=email,
                 )
-                await user_dao.create(db, new_sys_user, social=True)
+                await user_dao.add_by_oauth2(db, new_sys_user)
                 await db.flush()
-                sys_user = await user_dao.check_email(db, sso_email)
+                sys_user = await user_dao.get_by_username(db, username)
             # 创建 token
-            sys_user_id = sys_user.id
             access_token = await jwt.create_access_token(
-                str(sys_user_id),
+                str(sys_user.id),
                 sys_user.is_multi_login,
                 # extra info
                 username=sys_user.username,
@@ -73,7 +68,7 @@ class SSOService:
                 browser=request.state.browser,
                 device=request.state.device,
             )
-            refresh_token = await jwt.create_refresh_token(str(sys_user_id), multi_login=sys_user.is_multi_login)
+            refresh_token = await jwt.create_refresh_token(str(sys_user.id), multi_login=sys_user.is_multi_login)
             await user_dao.update_login_time(db, sys_user.username)
             await db.refresh(sys_user)
             login_log = dict(
