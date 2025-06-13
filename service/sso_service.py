@@ -7,13 +7,14 @@ from fastapi import BackgroundTasks, Request, Response
 
 from backend.app.admin.crud.crud_user import user_dao
 from backend.app.admin.schema.token import GetLoginToken
-from backend.app.admin.schema.user import RegisterUserParam
 from backend.app.admin.service.login_log_service import login_log_service
 from backend.common.enums import LoginLogStatusType
 from backend.common.security import jwt
 from backend.core.conf import settings
 from backend.database.db import async_db_session
 from backend.database.redis import redis_client
+from backend.plugin.casdoor_sso.crud.sso import sso_dao
+from backend.plugin.casdoor_sso.schema.sso import AddSsoUserParam
 from backend.utils.timezone import timezone
 
 
@@ -46,13 +47,14 @@ class SSOService:
             if not sys_user:
                 while await user_dao.get_by_username(db, username):
                     username = f'{username}_{text_captcha(5)}'
-                new_sys_user = RegisterUserParam(
+                new_sys_user = AddSsoUserParam(
                     username=username,
                     password='123456',  # 默认密码，可修改系统用户表进行默认密码检测并配合前端进行修改密码提示
                     nickname=nickname,
                     email=email,
+                    avatar=None,
                 )
-                await user_dao.add_by_oauth2(db, new_sys_user)
+                await sso_dao.add_by_sso(db, new_sys_user)
                 await db.flush()
                 sys_user = await user_dao.get_by_username(db, username)
             # 创建 token
