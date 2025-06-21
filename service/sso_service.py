@@ -64,7 +64,7 @@ class SSOService:
                 # extra info
                 username=sys_user.username,
                 nickname=sys_user.nickname,
-                last_login_time=timezone.t_str(timezone.now()),
+                last_login_time=timezone.to_str(timezone.now()),
                 ip=request.state.ip,
                 os=request.state.os,
                 browser=request.state.browser,
@@ -88,7 +88,7 @@ class SSOService:
                 key=settings.COOKIE_REFRESH_TOKEN_KEY,
                 value=refresh_token.refresh_token,
                 max_age=settings.COOKIE_REFRESH_TOKEN_EXPIRE_SECONDS,
-                expires=timezone.f_utc(refresh_token.refresh_token_expire_time),
+                expires=timezone.to_utc(refresh_token.refresh_token_expire_time),
                 httponly=True,
             )
             data = GetLoginToken(
