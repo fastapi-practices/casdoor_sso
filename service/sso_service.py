@@ -49,7 +49,7 @@ class SSOService:
                     username = f'{username}_{text_captcha(5)}'
                 new_sys_user = AddSsoUserParam(
                     username=username,
-                    password='123456',  # 默认密码，可修改系统用户表进行默认密码检测并配合前端进行修改密码提示
+                    password=None,
                     nickname=nickname,
                     email=email,
                     avatar=None,

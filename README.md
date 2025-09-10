@@ -7,19 +7,21 @@
 1. 在环境变量文件 `.env` 中添加以下内容:
 
     ```dotenv
-    # Casdoor
+    # [ Plugin ] Casdoor
     CASDOOR_SSO_CLIENT_ID='Casdoor 应用 client_id'
     CASDOOR_SSO_CLIENT_SECRET='Casdoor 应用 client_secret'
     ```
 2. 在 `core/conf.py` 中添加以下内容:
 
     ```python
-    # Plugin Casdoor
-    # .env Casdoor
+    ##################################################
+    # [ Plugin ] Casdoor
+    ##################################################
+    # .env
     CASDOOR_SSO_CLIENT_ID: str
     CASDOOR_SSO_CLIENT_SECRET: str
    
-    # Casdoor
+    # 基础配置
     CASDOOR_SSO_CERTIFICATE: str = ''
     CASDOOR_SSO_ENDPOINT: str = 'http://localhost:8080'
     CASDOOR_SSO_ORG_NAME: str = 'casdoor'
