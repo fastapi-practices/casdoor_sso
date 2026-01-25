@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 from typing import Any
 
 from fast_captcha import text_captcha
@@ -73,15 +71,15 @@ class SSOService:
             refresh_token = await jwt.create_refresh_token(str(sys_user.id), multi_login=sys_user.is_multi_login)
             await user_dao.update_login_time(db, sys_user.username)
             await db.refresh(sys_user)
-            login_log = dict(
-                db=db,
-                request=request,
-                user_uuid=sys_user.uuid,
-                username=sys_user.username,
-                login_time=timezone.now(),
-                status=LoginLogStatusType.success.value,
-                msg='登录成功（SSO）',
-            )
+            login_log = {
+                'db': db,
+                'request': request,
+                'user_uuid': sys_user.uuid,
+                'username': sys_user.username,
+                'login_time': timezone.now(),
+                'status': LoginLogStatusType.success.value,
+                'msg': '登录成功（SSO）',
+            }
             background_tasks.add_task(login_log_service.create, **login_log)
             await redis_client.delete(f'{settings.CAPTCHA_LOGIN_REDIS_PREFIX}:{request.state.ip}')
             response.set_cookie(

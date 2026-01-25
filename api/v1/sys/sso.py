@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 from casdoor import AsyncCasdoorSDK
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
 from fastapi_limiter.depends import RateLimiter
@@ -18,7 +16,7 @@ sdk = AsyncCasdoorSDK(
     certificate=settings.CASDOOR_SSO_CERTIFICATE,
     org_name=settings.CASDOOR_SSO_ORG_NAME,
     application_name=settings.CASDOOR_SSO_APPLICATION_NAME,
-    front_endpoint=settings.CASDOOR_SSO_FRONT_ENDPOINT,
+    front_endpoint=settings.CASDOOR_SSO_ACCESS_ENDPOINT,
 )
 
 
@@ -34,7 +32,7 @@ async def casdoor_sso(request: Request) -> ResponseSchemaModel[str]:
     description='Casdoor SSo 授权后，自动重定向到当前地址并获取用户信息，通过用户信息自动创建系统用户',
     dependencies=[Depends(RateLimiter(times=5, minutes=1))],
 )
-async def casdoor_sso_login(request: Request, response: Response, background_tasks: BackgroundTasks):
+async def casdoor_sso_login(request: Request, response: Response, background_tasks: BackgroundTasks):  # noqa: ANN201
     code = request.query_params.get('code')
     _state = request.query_params.get('state')
     token = await sdk.get_oauth_token(code)

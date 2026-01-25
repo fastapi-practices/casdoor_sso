@@ -3,6 +3,7 @@ summary = 'Casdoor SSO'
 version = '0.0.3'
 description = '通过 Casdoor 实现 SSO 单点登录集成'
 author = 'wu-clan'
+tags = ['auth']
 
 [app]
 extend = 'admin'
@@ -10,3 +11,11 @@ extend = 'admin'
 [api.sso]
 prefix = '/casdoor-sso'
 tags = 'Casdoor SSO'
+
+[settings]
+CASDOOR_SSO_CERTIFICATE = ''
+CASDOOR_SSO_ENDPOINT = 'http://localhost:8080'
+CASDOOR_SSO_ORG_NAME = 'casdoor'
+CASDOOR_SSO_APPLICATION_NAME = 'Casdoor'
+CASDOOR_SSO_ACCESS_ENDPOINT = 'http://localhost:8080'
+CASDOOR_SSO_FRONTEND_REDIRECT_URI = 'http://localhost:8080/casdoor/callback'
