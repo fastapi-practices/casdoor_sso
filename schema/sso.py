@@ -1,11 +1,10 @@
-from pydantic import EmailStr, Field, HttpUrl
+from pydantic import Field
 
-from backend.app.admin.schema.user import AuthSchemaBase
+from backend.app.admin.schema.user import AddOAuth2UserParam
+from backend.common.schema import CustomEmailStr
 
 
-class AddSsoUserParam(AuthSchemaBase):
-    """添加 OAuth2 用户参数"""
+class AddSsoUserParam(AddOAuth2UserParam):
+    """添加 SSO 用户参数"""
 
-    nickname: str | None = Field(None, description='昵称')
-    email: EmailStr = Field(description='邮箱')
-    avatar: HttpUrl | None = Field(None, description='头像地址')
+    email: CustomEmailStr = Field(description='邮箱')
