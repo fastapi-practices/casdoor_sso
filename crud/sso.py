@@ -27,7 +27,7 @@ class CRUDSso(CRUDPlus[User]):
         db.add(new_user)
         await db.flush()
 
-        role_stmt = select(Role).where(Role.status == StatusType.enable)
+        role_stmt = select(Role).where(Role.status == StatusType.enable, Role.deleted == 0)
         result = await db.execute(role_stmt)
         role = result.scalars().first()  # 默认绑定第一个可用角色
         if role is None:

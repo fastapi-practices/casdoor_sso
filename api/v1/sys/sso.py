@@ -11,7 +11,7 @@ from backend.utils.limiter import RateLimiter
 
 router = APIRouter()
 
-sdk = AsyncCasdoorSDK(
+__async_casdoor_sdk = AsyncCasdoorSDK(
     endpoint=settings.CASDOOR_SSO_ENDPOINT,
     client_id=settings.CASDOOR_SSO_CLIENT_ID,
     client_secret=settings.CASDOOR_SSO_CLIENT_SECRET,
@@ -24,7 +24,7 @@ sdk = AsyncCasdoorSDK(
 
 @router.get('', summary='获取 Casdoor SSO 授权链接')
 async def casdoor_sso(request: Request) -> ResponseSchemaModel[str]:
-    sso_url = await sdk.get_auth_link(redirect_uri=f'{request.url}/callback')
+    sso_url = await __async_casdoor_sdk.get_auth_link(redirect_uri=f'{request.url}/callback')
     return response_base.success(data=sso_url)
 
 
@@ -42,9 +42,9 @@ async def casdoor_sso_login(
 ) -> RedirectResponse:
     code = request.query_params.get('code')
     _state = request.query_params.get('state')
-    token = await sdk.get_oauth_token(code)
+    token = await __async_casdoor_sdk.get_oauth_token(code)
     access_token = token['access_token']
-    user = sdk.parse_jwt_token(access_token)
+    user = __async_casdoor_sdk.parse_jwt_token(access_token)
     data = await sso_service.create_with_login(
         db=db,
         request=request,
