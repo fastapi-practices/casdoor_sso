@@ -11,25 +11,6 @@
 
 ## 配置说明
 
-在 `backend/core/conf.py` 中添加以下内容：
-
-```python
-##################################################
-# [ Plugin ] casdoor_sso
-##################################################
-# .env
-CASDOOR_SSO_CLIENT_ID: str
-CASDOOR_SSO_CLIENT_SECRET: str
-
-# 基础配置（in plugin.toml）
-CASDOOR_SSO_CERTIFICATE: str
-CASDOOR_SSO_ENDPOINT: str
-CASDOOR_SSO_ORG_NAME: str
-CASDOOR_SSO_APPLICATION_NAME: str
-CASDOOR_SSO_ACCESS_ENDPOINT: str  # Casdoor UI 地址
-CASDOOR_SSO_FRONTEND_REDIRECT_URI: str
-```
-
 在 `backend/.env` 中添加以下内容：
 
 ```env
@@ -49,6 +30,34 @@ CASDOOR_SSO_APPLICATION_NAME = 'Casdoor'
 CASDOOR_SSO_ACCESS_ENDPOINT = 'http://localhost:8080'
 CASDOOR_SSO_FRONTEND_REDIRECT_URI = 'http://localhost:8080/casdoor/callback'
 ```
+
+在 `backend/core/conf.py` 中添加以下内容：
+
+```python
+##################################################
+# [ Plugin ] casdoor_sso
+##################################################
+# .env
+CASDOOR_SSO_CLIENT_ID: str = ''
+CASDOOR_SSO_CLIENT_SECRET: str = ''
+
+# 基础配置（in plugin.toml）
+CASDOOR_SSO_CERTIFICATE: str
+CASDOOR_SSO_ENDPOINT: str
+CASDOOR_SSO_ORG_NAME: str
+CASDOOR_SSO_APPLICATION_NAME: str
+CASDOOR_SSO_ACCESS_ENDPOINT: str  # Casdoor UI 地址
+CASDOOR_SSO_FRONTEND_REDIRECT_URI: str
+```
+
+## 配置项说明
+
+- `CASDOOR_SSO_CERTIFICATE`：Casdoor 应用证书，用于校验 Casdoor 签发的令牌
+- `CASDOOR_SSO_ENDPOINT`：Casdoor 服务端地址
+- `CASDOOR_SSO_ORG_NAME`：Casdoor 组织名称
+- `CASDOOR_SSO_APPLICATION_NAME`：Casdoor 应用名称，同时作为授权链接的 state 参数
+- `CASDOOR_SSO_ACCESS_ENDPOINT`：Casdoor 前端地址，用于拼接授权链接
+- `CASDOOR_SSO_FRONTEND_REDIRECT_URI`：登录成功后前端接收令牌的地址
 
 ## 使用方式
 
