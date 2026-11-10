@@ -1,0 +1,2 @@
+# 插件直接使用的 HTTP 客户端，与宿主 fastapi[standard] 带入的 httpx 版本保持一致
+httpx>=0.28.1

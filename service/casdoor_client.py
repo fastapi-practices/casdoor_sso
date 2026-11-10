@@ -1,11 +1,14 @@
 """Casdoor OIDC 授权码流程客户端
 
-插件不再依赖 casdoor 包：它对 PyJWT、cryptography、requests 的版本约束会把宿主的
-安全依赖回退到存在已知漏洞的旧版本（PyJWT 2.13.0 起才修复算法混淆等漏洞），
-因此在插件内实现所需的最小 OIDC 流程，行为与 casdoor SDK 保持一致
-"""
+插件不依赖 casdoor 官方包，原因是该包（casdoor-python-sdk）写死了
+`PyJWT~=2.12.1`、`cryptography~=46.0.6`、`requests~=2.33.0` 三条上界约束，
+与宿主 pyjwt>=2.15.1、cryptography>=50.0.2、requests>=2.34.2 无交集，
+装入宿主环境会回退 PyJWT 到 2.12.1（未修复 GHSA-xgmm-8j9v-c9wx 等算法混淆漏洞，
+而宿主自身的登录令牌也依赖 PyJWT）或直接解析失败。
 
-import base64
+因此在插件内实现所需的最小 OIDC 授权码流程，请求路径、字段与校验行为
+与 casdoor SDK 保持一致，且不引入任何宿主环境之外的新依赖
+"""
 
 from typing import Any
 from urllib.parse import urlencode
@@ -18,8 +21,8 @@ from cryptography import x509
 from backend.common.exception import errors
 from backend.core.conf import settings
 
-# Casdoor 签发的令牌使用 RS256
-_ALGORITHMS = ('RS256',)
+# 与 casdoor SDK 对齐：证书的 Crypto Algorithm 可选值
+_ALGORITHMS = ('RS256', 'RS512', 'ES256', 'ES384', 'ES512')
 
 
 class CasdoorClient:
@@ -69,19 +72,6 @@ class CasdoorClient:
         })
         return f'{self.front_endpoint}/login/oauth/authorize?{query}'
 
-    def _headers(self) -> dict[str, str]:
-        """
-        构造请求头
-
-        :return:
-        """
-        basic_auth = base64.b64encode(f'{self.client_id}:{self.client_secret}'.encode()).decode()
-        return {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': f'Basic {basic_auth}',
-        }
-
     async def get_oauth_token(self, code: str) -> dict[str, Any]:
         """
         用授权码换取访问令牌
@@ -99,8 +89,8 @@ class CasdoorClient:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 response = await client.post(
                     f'{self.endpoint}/api/login/oauth/access_token',
-                    data=payload,
-                    headers=self._headers(),
+                    json=payload,
+                    headers={'Accept': 'application/json'},
                 )
                 response.raise_for_status()
                 return response.json()
